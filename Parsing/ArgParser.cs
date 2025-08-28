@@ -19,6 +19,7 @@ namespace BetterSharpPick.Parsing
             bool useXor = false;
             string xorKey = string.Empty;
             byte xorKeyByte = 0;
+            bool IsPathRaw = false;
 
             string pathOrUrl = string.Empty;
             string command = string.Empty;
@@ -69,10 +70,15 @@ namespace BetterSharpPick.Parsing
                         break;
 
                     case "-arg":
-                    case "--arg":
-                        EnsureHasValue(args, i, "-arg/--arg");
+                    case "--argument":
+                        EnsureHasValue(args, i, "-arg/--argument");
                         i++;
                         commandArgs.Add(decoder.Decode(args[i]));
+                        break;
+
+                    case "-raw":
+                    case "--raw":
+                        IsPathRaw = true;
                         break;
 
                     default:
@@ -90,6 +96,7 @@ namespace BetterSharpPick.Parsing
             opts.PathOrUrl = pathOrUrl;
             opts.Command = command;
             opts.CommandArgs = commandArgs.ToArray();
+            opts.IsPathRaw = IsPathRaw;
             return opts;
         }
 

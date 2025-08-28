@@ -19,7 +19,7 @@ namespace BetterSharpPick.Payload
             if (!string.IsNullOrWhiteSpace(opts.Command))
             {
                 dataBytes = Encoding.UTF8.GetBytes(opts.Command);
-                source = "inline (-c)";
+                source = "Inline command used (-c)";
             }
             else if (!string.IsNullOrWhiteSpace(opts.PathOrUrl))
             {
@@ -29,22 +29,26 @@ namespace BetterSharpPick.Payload
             else
                 throw new ArgumentException("No input to process: provide either '-c <text>' or '-path <file|url>'.");
 
-            if (opts.UseBase64)
-                dataBytes = DecodeBase64ToBytes(dataBytes);
+            if (!opts.IsPathRaw)
+            {
+                if (opts.UseBase64)
+                    dataBytes = DecodeBase64ToBytes(dataBytes);
 
-            if (opts.UseXor)
-                dataBytes = ApplyXor(dataBytes, opts.XorKey);
+                if (opts.UseXor)
+                    dataBytes = ApplyXor(dataBytes, opts.XorKey);
+            }
 
             string decodedText = BytesToUtf8(dataBytes);
 
             string[] decodedArgs = opts.CommandArgs ?? Array.Empty<string>();
 
 #if DEBUG
-            Console.WriteLine("    source        : " + source);
-            Console.WriteLine("    payload       : " + Preview(decodedText, 200));
-            Console.WriteLine("    args          : [" + string.Join(", ", decodedArgs) + "]");
-            Console.WriteLine("    xor?          : " + opts.UseXor);
-            Console.WriteLine("    xorKey        : " + opts.XorKey);
+            Console.WriteLine("[+] ~MustafaNafizDurukan #BetterSharpPick");
+            Console.WriteLine("[+] URL/PATH : " + source);
+            if (decodedArgs.Length > 0)
+                Console.WriteLine("[+] Argument : " + decodedArgs[0]);
+            if (opts.UseXor)
+                Console.WriteLine("[+] XOR Key: " + opts.XorKey);
 #endif
             return string.Join(Environment.NewLine, new[] { decodedText }.Concat(decodedArgs ?? Array.Empty<string>()));
         }
@@ -62,7 +66,7 @@ namespace BetterSharpPick.Payload
             }
             catch (FormatException ex)
             {
-                throw new ArgumentException("Invalid Base64 payload content.", ex);
+                throw new ArgumentException("Invalid Base64 (path variable) payload content.", ex);
             }
         }
 

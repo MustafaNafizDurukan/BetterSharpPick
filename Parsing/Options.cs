@@ -15,6 +15,7 @@ namespace BetterSharpPick.Parsing
         public string PathOrUrl { get; set; }
         public string Command { get; set; }
         public string[] CommandArgs { get; set; }
+        public bool IsPathRaw { get; set; }
 
         public Options()
         {

