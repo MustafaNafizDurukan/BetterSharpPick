@@ -33,7 +33,8 @@ namespace BetterSharpPick
 
                 Patcher.Patch();
 
-                Executor.Execute(payload);
+                string output = Executor.Execute(payload);
+                Console.WriteLine(output);
 
                 return 0;
             }

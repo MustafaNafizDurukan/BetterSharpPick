@@ -29,7 +29,8 @@ namespace BetterSharpPick.Payload
             else
                 throw new ArgumentException("No input to process: provide either '-c <text>' or '-path <file|url>'.");
 
-            if (!opts.IsPathRaw)
+            // Inlince command (-c) has alrady been decoded
+            if (!string.IsNullOrWhiteSpace(opts.PathOrUrl) && !opts.IsPathRaw)
             {
                 if (opts.UseBase64)
                     dataBytes = DecodeBase64ToBytes(dataBytes);
@@ -42,14 +43,16 @@ namespace BetterSharpPick.Payload
 
             string[] decodedArgs = opts.CommandArgs ?? Array.Empty<string>();
 
-#if DEBUG
             Console.WriteLine("[+] ~MustafaNafizDurukan #BetterSharpPick");
-            Console.WriteLine("[+] URL/PATH : " + source);
+            if (!string.IsNullOrWhiteSpace(opts.PathOrUrl))
+                Console.WriteLine("[+] URL/PATH : " + source);
+            else 
+                Console.WriteLine("[+] Command : " + decodedText);
             if (decodedArgs.Length > 0)
                 Console.WriteLine("[+] Argument : " + decodedArgs[0]);
             if (opts.UseXor)
                 Console.WriteLine("[+] XOR Key: " + opts.XorKey);
-#endif
+
             return string.Join(Environment.NewLine, new[] { decodedText }.Concat(decodedArgs ?? Array.Empty<string>()));
         }
 
@@ -66,7 +69,7 @@ namespace BetterSharpPick.Payload
             }
             catch (FormatException ex)
             {
-                throw new ArgumentException("Invalid Base64 (path variable) payload content.", ex);
+                throw new ArgumentException("Invalid Base64 payload content.", ex);
             }
         }
 

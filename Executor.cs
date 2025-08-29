@@ -21,7 +21,7 @@ namespace BetterSharpPick.Scripting
                 {
                     ps.Runspace = runspace;
                     ps.AddScript("$ErrorActionPreference = 'Continue';", useLocalScope: true);
-                    ps.AddScript(script, useLocalScope: true);
+                    ps.AddScript(script + " 6>&1", useLocalScope: true);
 
                     Collection<PSObject> results = ps.Invoke();
 

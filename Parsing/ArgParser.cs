@@ -89,6 +89,9 @@ namespace BetterSharpPick.Parsing
             if (useXor && string.IsNullOrEmpty(xorKey))
                 throw new ArgumentException("XOR key has not been specified. Use '-xor <key>' (In b64 mode, key may be encoded with base64).");
 
+            if (command.Length != 0 && pathOrUrl.Length != 0)
+                throw new ArgumentException("Command and Path cant be used at the same time");
+
             var opts = new Options();
             opts.UseBase64 = decoder.UseBase64;
             opts.UseXor = useXor;
