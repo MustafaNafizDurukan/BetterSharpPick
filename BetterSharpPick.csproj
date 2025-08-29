@@ -49,8 +49,12 @@
     <Compile Include="Executor.cs" />
     <Compile Include="Parsing\ArgParser.cs" />
     <Compile Include="Parsing\Options.cs" />
-    <Compile Include="Payload\ConsolePayloadPreparer.cs" />
-    <Compile Include="Payload\IPayloadPreparer.cs" />
+    <Compile Include="Patch\AMSI.cs" />
+    <Compile Include="Patch\Common.cs" />
+    <Compile Include="Patch\ETW.cs" />
+    <Compile Include="Patch\Patch.cs" />
+    <Compile Include="Payload\Preparer.cs" />
+    <Compile Include="Payload\IPreparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DecodeService.cs" />

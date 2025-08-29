@@ -14,7 +14,7 @@ namespace BetterSharpPick.Parsing
         {
             if (args == null) args = new string[0];
 
-            var decoder = new DecodeService();
+            var decoder = new Services.Decoder();
 
             bool useXor = false;
             string xorKey = string.Empty;

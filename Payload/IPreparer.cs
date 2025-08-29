@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BetterSharpPick.Payload
 {
-    public interface IPayloadPreparer
+    public interface IPreparer
     {
         string Prepare(Options opts);
     }

@@ -3,11 +3,11 @@ using System.Text;
 
 namespace BetterSharpPick.Services
 {
-    public class DecodeService
+    public class Decoder
     {
         public bool UseBase64 { get; set; }
 
-        public DecodeService()
+        public Decoder()
         {
         }
 

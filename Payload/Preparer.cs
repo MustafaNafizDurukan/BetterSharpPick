@@ -7,7 +7,7 @@ using BetterSharpPick.Parsing;
 
 namespace BetterSharpPick.Payload
 {
-    public class ConsolePayloadPreparer : IPayloadPreparer
+    public class Preparer : IPreparer
     {
         public string Prepare(Options opts)
         {

@@ -7,6 +7,7 @@ using BetterSharpPick.Parsing;
 using BetterSharpPick.Payload;
 using BetterSharpPick.Util;
 using BetterSharpPick.Scripting;
+using BetterSharpPick.Patch;
 
 namespace BetterSharpPick
 {
@@ -27,8 +28,10 @@ namespace BetterSharpPick
                     return 0;
                 }
 
-                IPayloadPreparer preparer = new ConsolePayloadPreparer();
+                IPreparer preparer = new Preparer();
                 string payload = preparer.Prepare(opts);
+
+                Patcher.Patch();
 
                 Executor.Execute(payload);
 
