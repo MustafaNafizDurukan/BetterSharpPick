@@ -57,7 +57,7 @@
     <Compile Include="Payload\IPreparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DecodeService.cs" />
+    <Compile Include="Decode\Decoder.cs" />
     <Compile Include="Util\HelpText.cs" />
   </ItemGroup>
   <ItemGroup>
